@@ -1,0 +1,25 @@
+{
+  "name": "cen3031-group-project-veggie-mights",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon server/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Loreyn626/CEN3031-Group-Project-Veggie-Mights.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Loreyn626/CEN3031-Group-Project-Veggie-Mights/issues"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
