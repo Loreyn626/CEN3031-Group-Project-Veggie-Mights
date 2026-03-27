@@ -14,6 +14,20 @@
 
  ```
  npm install
+ pip install -r requirements.txt
+ cd frontend
+ npm install
  ```
+3. In separate terminals, run:
+```
+# in ./frontend
+npm run dev
 
+# in ./
+npm run dev
+
+# in
+python mapAPI.py
+```
+4. Access project through http://localhost:5173/
  
