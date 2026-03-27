@@ -1,11 +1,17 @@
 <script setup></script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div style="height: 700px;" id="div-1" ></div>
 </template>
 
 <style scoped></style>
+
+<script>
+  import Plotly from 'plotly.js-dist-min'
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    const response = await fetch('/api/map');
+    const map = await response.json();
+    Plotly.newPlot("div-1", map.data, map.layout)
+  })
+</script>
