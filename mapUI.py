@@ -1,4 +1,9 @@
 import plotly.graph_objects as go
+from data.classes import *
+from data.parsing import countries
+
+for country in countries:
+   print(country.name)
 
 def plotMap():
    costs = ['Low', 'Medium', 'High']
