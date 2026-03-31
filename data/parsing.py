@@ -11,11 +11,10 @@ with open('data/price_of_healthy_diet_clean.csv', 'r') as csvFile:
         code = line['country_code']
         name = line['country']
         region = line['region']
-        costCategory = line['cost_category']
         
         # If country is NOT in countries array, create and append country
         if not any(country.name == name for country in countries):
-            countryObj = Country(code, name, region, costCategory)
+            countryObj = Country(code, name, region)
             countries.append(countryObj)
             current_index += 1
 

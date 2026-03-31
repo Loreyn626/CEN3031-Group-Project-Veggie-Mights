@@ -6,7 +6,6 @@ country_names = [] # For locations
 all_annual_costs = {} # For annual costs
 
 for country in countries:
-   print(country.name)
    country_names.append(country.name)
 
    all_annual_costs[country.name] = [] # Initialize array
@@ -19,12 +18,15 @@ def plotMap():
    cost_categories = ['Low', 'Medium', 'High']
    colors = ['green', 'orange', 'red']
 
-   fig = go.Figure()
+   fig = go.Figure() # Initialize graph object
 
-   # go.Choropleth is where data is actually being inserted
+   # ========= ANNUAL COST + SLIDERS PER YEAR =========
+   zmin = 999999
+   zmax = 0
+   yearly_z_values = []
    for i in range(8): # 8 years: 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
       # Each year needs different z-values
-      yearly_z_values = []
+      year_z_values = []
 
       # Add all costs for that specific year
       for name in country_names:
@@ -35,25 +37,33 @@ def plotMap():
          else:
             cost = None
 
-         yearly_z_values.append(cost)
+         year_z_values.append(cost)
+      
+      # Add array of each country's annual cost for the year to a yearly array
+      yearly_z_values.append(year_z_values)
 
-      # Determine min and max for the specific year
-      # Can't just use min() or max() on z_values because it doesn't work with "None" values
-      yearly_costs = []
+   # Determine min and max for the specific year
+   # Can't just use min() or max() on z_values because it doesn't work with "None" values
+   yearly_costs = []
 
-      for value in yearly_z_values:
+   for year in yearly_z_values:
+      for value in year:
          if value is not None:
             yearly_costs.append(value)
 
-      zmin = min(yearly_costs)
-      zmax = max(yearly_costs)
+   # zmin & zmax is the lowest and highest value of ALL costs over ALL years
+   # This helps keep colorscale consistent between years and when we trace 8 times (1 trace per year)
+   zmin = min(yearly_costs)
+   zmax = max(yearly_costs)
 
+   # go.Choropleth is where data is actually being inserted
+   for i in range(8):
       fig.add_trace(go.Choropleth(
          # insert country names here as an array
          locations=country_names,
          locationmode='country names',
          # Display all annual costs for now before adding more info later
-         z=yearly_z_values,
+         z=yearly_z_values[i],
          # Color scaling, 0% of the way to max is green, 50% = orange, 100% = red
          colorscale=[[0.0, colors[0]],[0.5, colors[1]],[1.0, colors[2]]],
          showscale=True,
@@ -61,18 +71,6 @@ def plotMap():
          name=str(i + 2017),
          zmin=zmin,
          zmax=zmax
-      ))
-
-   # go.Scattergeo function is only being used to incorporate figure labels for the colors
-   # don't insert any data here
-   for i in range(len(cost_categories)):
-      fig.add_trace(go.Scattergeo(
-         locations=['USA'],
-         locationmode='country names',
-         marker_color= colors[i],
-         name=cost_categories[i],
-         showlegend=True,
-         hoverinfo='skip',
       ))
 
    # Slider functionality for UI, testing with values first before setting it up fully

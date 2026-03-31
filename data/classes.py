@@ -7,15 +7,15 @@ Skimming the data, there are no years & countries where cost categories have cha
 import math
 
 class Country:
-    def __init__(self, code, name, region, costCategory): 
+    def __init__(self, code, name, region): 
         # Only created ONCE
         self.code = code
         self.name = name
         self.region = region
-        self.costCategory = costCategory
         self.dataQuality = "Estimated value"
 
         # Additonal data provided per yearly values
+        self.costCategory = []
         self.years = []
         self.costPPPs = []
         self.annualCosts =[]
@@ -38,6 +38,15 @@ class Country:
         self.vegetablesPPPs.append(vegetablesPPP)
         self.fruitsPPPs.append(fruitsPPP)
         self.totalFoodCosts.append(totalFoodCost)
+
+        # The original dataset did not have any data rows with 'Low Cost' so this is to manually calculate affordability using PPP (purchasing power parity)
+        # The numbers can be tweaked
+        if float(costPPP) <= 2.5:
+            self.costCategory.append('Low Cost')
+        elif 2.5 < float(costPPP) <= 3.5:
+            self.costCategory.append('Medium Cost')
+        else:
+            self.costCategory.append('High Cost')
 
     # Calculates averages for the country from the arrays --> costPPP, annualCost, veggiePPP, totalFoodCost
     def calcAverages(self):
