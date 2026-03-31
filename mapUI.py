@@ -24,36 +24,36 @@ def plotMap():
    # go.Choropleth is where data is actually being inserted
    for i in range(8): # 8 years: 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
       # Each year needs different z-values
-      z_values_for_year = []
+      yearly_z_values = []
 
       # Add all costs for that specific year
       for name in country_names:
          costs = all_annual_costs[name]
 
          if i < len(costs):
-            cost_value = costs[i]
+            cost = costs[i]
          else:
-            cost_value = None
+            cost = None
 
-         z_values_for_year.append(cost_value)
+         yearly_z_values.append(cost)
 
       # Determine min and max for the specific year
       # Can't just use min() or max() on z_values because it doesn't work with "None" values
-      year_costs = []
+      yearly_costs = []
 
-      for value in z_values_for_year:
+      for value in yearly_z_values:
          if value is not None:
-            year_costs.append(value)
+            yearly_costs.append(value)
 
-      zmin = min(year_costs)
-      zmax = max(year_costs)
+      zmin = min(yearly_costs)
+      zmax = max(yearly_costs)
 
       fig.add_trace(go.Choropleth(
          # insert country names here as an array
          locations=country_names,
          locationmode='country names',
          # Display all annual costs for now before adding more info later
-         z=z_values_for_year,
+         z=yearly_z_values,
          # Color scaling, 0% of the way to max is green, 50% = orange, 100% = red
          colorscale=[[0.0, colors[0]],[0.5, colors[1]],[1.0, colors[2]]],
          showscale=True,
@@ -63,8 +63,6 @@ def plotMap():
          zmax=zmax
       ))
 
-   # Legend currently bugged at the moment
-   """
    # go.Scattergeo function is only being used to incorporate figure labels for the colors
    # don't insert any data here
    for i in range(len(cost_categories)):
@@ -76,7 +74,6 @@ def plotMap():
          showlegend=True,
          hoverinfo='skip',
       ))
-   """
 
    # Slider functionality for UI, testing with values first before setting it up fully
    # For slider creation and labeling
@@ -89,6 +86,9 @@ def plotMap():
             visible_list.append(True)
          else:
             visible_list.append(False)
+
+         # Include the legend in all years
+         visible_list.extend([True] * len(cost_categories))
 
       step = dict(
          method="update", # Updates map
