@@ -71,13 +71,30 @@ def plotMap():
          zmax=zmax
       ))
 
+   # go.Scattergeo function is only being used to incorporate figure labels for the colors
+   # don't insert any data here
+   for i in range(len(cost_categories)):
+      fig.add_trace(go.Scattergeo(
+         lat=[None],
+         lon=[None],
+         locationmode='country names',
+         marker_color= colors[i],
+         name=cost_categories[i],
+         showlegend=True,
+         hoverinfo='skip',
+      ))
+
    # Slider functionality for UI, testing with values first before setting it up fully
    # For slider creation and labeling
    steps = []
    for i in range(8): # 8 different years
       # Only show one year's map at a time, prevent overlap
       visible_list = []
+
       for j in range(8):
+         # Include the legend in all years
+         visible_list.extend([True] * len(cost_categories))
+
          if j == i:
             visible_list.append(True)
          else:
@@ -114,7 +131,9 @@ def plotMap():
          showarrow = False
       )],
       legend=dict(
-         x=0.89
+         x=0.89,
+         itemclick=False,
+         itemdoubleclick=False
       )
    )
 
