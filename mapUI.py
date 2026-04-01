@@ -21,8 +21,6 @@ def plotMap():
    fig = go.Figure() # Initialize graph object
 
    # ========= ANNUAL COST + SLIDERS PER YEAR =========
-   zmin = 999999
-   zmax = 0
    yearly_z_values = []
    for i in range(8): # 8 years: 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
       # Each year needs different z-values
@@ -84,9 +82,6 @@ def plotMap():
             visible_list.append(True)
          else:
             visible_list.append(False)
-
-         # Include the legend in all years
-         visible_list.extend([True] * len(cost_categories))
 
       step = dict(
          method="update", # Updates map
