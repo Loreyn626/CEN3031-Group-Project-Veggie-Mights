@@ -1,30 +1,96 @@
 <template>
+  <div id="div-top">
+    <h1>World Map: Cost of a Healthy Diet</h1>
+    <ul id="dataSelectionBar">
+      <li id="Home">Home</li>
+      <li id="Daily Cost">Daily Cost</li>
+      <li id="Annual Cost">Annual Cost</li>
+      <li id="Vegetables Cost">Vegetables Cost</li>
+      <li id="Fruits Cost">Fruits Cost</li>
+      <li id="Fruit & Vegetables Total Cost">Fruit & Vegetables Total Cost</li>
+    </ul>
+
+
+  </div>
   <div>
-    
     <!-- Whenever a letter is typed into the search bar, it will call the highlightCountry function -->
-    <input 
+    <input
       id="search"
-      type="search" 
-      @input="highlightCountry" 
+      type="search"
+      @input="highlightCountry"
       placeholder="Search for a country.."
     >
     <div style="height: 700px;" id="div-1"></div>
   </div>
+  <div id="div-bottom">
+    <h4>Additional Context</h4>
+    <p id="div-bottom-text">Write data here!</p>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+  /* ========== TITLE & NAVIGATION BUTTONS | div-top ========== */
+  #div-top {
+    font-family: Helvetica;
+  }
+
+  #div-top h1 {
+    margin-left: 40px; /* I think this is a good number to align with buttons */
+  }
+  #dataSelectionBar {
+    list-style-type: none;
+    display: flex;
+    gap: 15px; /* spacing between ul elements */
+  }
+
+  #dataSelectionBar li {
+    background-color: hsl(200, 100%, 50%);
+    color: white;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 8px; /* rounds corners */
+  }
+
+  #dataSelectionBar li:hover {
+    background-color: hsl(200, 100%, 45%);
+    cursor: pointer;
+  }
+
+  /* ========== BOTTOM TEXT BOX | div-bottom ========== */
+  #div-bottom {
+    font-family: Helvetica;
+    border: solid;
+    border-width: 5px;
+    border-color: hsl(200, 100%, 50%);
+    border-radius: 4px;
+  }
+
+  #div-bottom h4 {
+    margin-top: 0px;
+    padding: 5px;
+    background-color: hsl(200, 100%, 50%);
+    color: white;
+  }
+
+  #data {
+    margin-left: 5px;
+  }
+</style>
 
 <script setup>
-  import Plotly from "plotly.js-dist-min";
-
-  let chartDiv = null;
+  import Plotly from 'plotly.js-dist-min'
   let map = null;
+  let chartDiv = null;
 
   window.addEventListener("DOMContentLoaded", async () => {
-    const response = await fetch("/api/map");
-    map = await response.json();
+    const response = await fetch('/api/map/home');
+    const map = await response.json();
+
+    /* CREATES INITIAL MAP AND LOADS TO PAGE */
     chartDiv = document.getElementById("div-1");
-    await Plotly.newPlot(chartDiv, map.data, map.layout);
+    const mapPlot = await Plotly.newPlot(chartDiv, map.data, map.layout);
+    registerClickEvent(mapPlot);
+
     // tracks whether a change has been made to the slider
     chartDiv.on('plotly_sliderchange', (data) => {
       const searchInput = document.getElementById("search");
@@ -35,11 +101,74 @@
         }, 100);
       }
     });
+
+    /* CHANGE BETWEEN MAPS */
+    let homeButton = document.getElementById('Home')
+    homeButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/home');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    let dailyButton = document.getElementById('Daily Cost')
+    dailyButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/daily');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    let annualButton = document.getElementById('Annual Cost')
+    annualButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/annual');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    let vegetablesButton = document.getElementById('Vegetables Cost')
+    vegetablesButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/vegetables');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    let fruitsButton = document.getElementById('Fruits Cost')
+    fruitsButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/fruits');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    let fruitVegTotalButton = document.getElementById('Fruit & Vegetables Total Cost')
+    fruitVegTotalButton.addEventListener('click', async () => {
+      const response = await fetch('/api/map/fruit_veg_total');
+      const map = await response.json();
+      const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
+      registerClickEvent(mapPlot);
+    })
+
+    /* REGISTER CLICK EVENT  */
+    /* https://plotly.com/javascript/plotlyjs-events/#using-plotlyjs-events */
+    function registerClickEvent(chartDiv) {
+        chartDiv.removeAllListeners('plotly_click') /* Prevent duplicate click events */
+        chartDiv.on('plotly_click', function(data){
+          for(var i=0; i < data.points.length; i++){
+            let country = data.points[i].location
+            console.log(country) /* for testing */
+            document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
+          }
+        }
+      )
+    }
   })
 
   function highlightCountry(event) {
     const searchTerm = event.target.value;
-    
+
     // if the search bar is empty, clear the highlighting
     if (!searchTerm) {
       for (let i = 0; i < chartDiv.data.length; i++) {
@@ -51,24 +180,24 @@
       }
       return;
     }
-    
+
     // Find which map trace has locations
     for (let i = 0; i < chartDiv.data.length; i++) {
       let trace = chartDiv.data[i];
-      
+
       // because scattergeo doesn't have a .locations value
       if (trace.type == "choropleth" && trace.visible !== false) {
         // update array w/ with which country should get the blue highlight
         const lineWidths = [];
         const lineColors = [];
-        
+
         for (let i = 0; i < trace.locations.length; i++) {
           const country = trace.locations[i];
           const isMatch = country.toLowerCase().includes(searchTerm.toLowerCase());
           lineWidths.push(isMatch ? 3 : 1);
           lineColors.push(isMatch ? "blue" : "#444");
         }
-        
+
         // restyle for setting trace styling
         Plotly.restyle(chartDiv, {
           "marker.line.width": [lineWidths],
