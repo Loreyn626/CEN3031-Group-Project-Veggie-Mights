@@ -9,10 +9,12 @@
       <li id="Fruits Cost">Fruits Cost</li>
       <li id="Fruit & Vegetables Total Cost">Fruit & Vegetables Total Cost</li>
     </ul>
+    
+    <div id="topText">
+      <h4>Description:</h4>
+      <p id="details"></p>
+    </div>
 
-
-  </div>
-  <div>
     <!-- Whenever a letter is typed into the search bar, it will call the highlightCountry function -->
     <input
       id="search"
@@ -20,8 +22,10 @@
       @input="highlightCountry"
       placeholder="Search for a country.."
     >
-    <div style="height: 700px;" id="div-1"></div>
   </div>
+    
+  <div style="height: 700px;" id="div-1"></div> <!-- This is where MAP lives -->
+
   <div id="div-bottom">
     <h4>Additional Context</h4>
     <p id="div-bottom-text">Write data here!</p>
@@ -34,9 +38,19 @@
     font-family: Helvetica;
   }
 
-  #div-top h1 {
+  #topText, #search, #div-top h1 {
     margin-left: 40px; /* I think this is a good number to align with buttons */
   }
+
+  #topText h4 {
+    margin-top: 0px;
+    margin-right: 10px;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: gray;
+    color: white;
+  }
+
   #dataSelectionBar {
     list-style-type: none;
     display: flex;
@@ -54,6 +68,11 @@
   #dataSelectionBar li:hover {
     background-color: hsl(200, 100%, 45%);
     cursor: pointer;
+  }
+
+  #dataSelectionBar li.active {
+    background-color: hsl(360, 100%, 50%);
+    cursor: default;
   }
 
   /* ========== BOTTOM TEXT BOX | div-bottom ========== */
@@ -81,6 +100,29 @@
   import Plotly from 'plotly.js-dist-min'
   let map = null;
   let chartDiv = null;
+
+  /* Descriptions Map*/
+  const mapDescriptions = {
+    "Home" : `Shows the general costs of a healthy diet per country scored by low, medium, and high cost. 
+    The averages for daily cost of diet and annual cost of diet per country was calculated from data that spanned between 2017-2024.
+    Cost thresholds listed below and side legend can be operated to filter cost categories.
+    <ul>
+      <li>Low Cost: <$2.50/day</li>
+      <li>Medium Cost: $2.50-$3.49/day</li>
+      <li>High Cost: >$3.50/day</li>
+    </ul>
+    <br>`,
+    "Daily Cost" : `Daily cost of healthy diet per country by year.
+    Slide to across the years to view changes.`,
+    "Annual Cost" : `Annual cost of healthy diet per country by year.
+    Slide to across the years to view changes.`,
+    "Vegetables Cost" : `Daily cost of vegetables per country.
+    Data was collected only for the year 2021.`,
+    "Fruits Cost" : `Daily cost of fruits per country.
+    Data was collected only for the year 2021.`,
+    "Fruit & Vegetables Total Cost" : `Total daily cost of fruits and vegetables per country.
+    Data was collected only for the year 2021.`
+  }
 
   window.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch('/api/map/home');
@@ -164,6 +206,18 @@
         }
       )
     }
+
+  /* Tracks active page & updates description */
+  document.getElementById('Home').classList.add('active'); // sets Home to active on start
+  document.getElementById('details').innerHTML = mapDescriptions['Home'];
+  const tabList = document.querySelectorAll('#dataSelectionBar li')
+  tabList.forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelector('.active')?.classList.remove('active');
+      tab.classList.add('active');
+      document.getElementById('details').innerHTML = mapDescriptions[tab.id];
+      })
+  })
   })
 
   function highlightCountry(event) {

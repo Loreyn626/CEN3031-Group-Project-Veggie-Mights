@@ -16,9 +16,6 @@ country_averages = {'Country': [],
                     'Cost Category': [],
                     'Average Daily Cost': [],
                     'Average Annual Cost': [],
-                    'Average Vegetables Cost': [],
-                    'Average Fruits Cost': [],
-                    'Average Total Food Cost': [],
                     }
 
 for country in countries:
@@ -75,19 +72,6 @@ for country in countries:
     country_averages['Country'].append(country.name)
     country_averages['Average Daily Cost'].append(f' ${country.averagePPP:.2f}')
     country_averages['Average Annual Cost'].append(f' ${country.averageAnnualCost:.2f}')
-
-    # if/else to handle f' string format with exceptions for "N/A" values in vegetables and fruits
-    if type(country.averageVegetablesPPP) != str and type(country.averageVegetablesPPP) != bool:
-        country_averages['Average Vegetables Cost'].append(f' ${country.averageVegetablesPPP:.2f}')
-    else:
-        country_averages['Average Vegetables Cost'].append(country.averageVegetablesPPP)
-
-    if type(country.averageFruitsPPP) != str and type(country.averageFruitsPPP) != bool:
-        country_averages['Average Fruits Cost'].append(f' ${country.averageFruitsPPP:.2f}')
-    else:
-        country_averages['Average Fruits Cost'].append(country.averageFruitsPPP)
-
-    country_averages['Average Total Food Cost'].append(country.averageTotalFoodCost)
     country_averages['Cost Category'].append(country.averageCostCategory)
 
 # Use pandas library to make df for px
@@ -116,14 +100,11 @@ def plotAverageMap():
                             'Cost Category': False,
                             'Average Daily Cost': True,
                             'Average Annual Cost': True,
-                            'Average Vegetables Cost': True,
-                            'Average Fruits Cost': True
                         }
                         )
 
     # UPDATE UI
     fig.update_layout(
-        title_text='Average Cost of a Healthy Diet by Country',
         geo=dict(
             showframe=True,
             showcoastlines=True,
@@ -254,7 +235,6 @@ def plotYearlyMap(data):
 
     # ========== UPDATE LAYOUT/UI OPTIONS ==========
     fig.update_layout(
-        title_text='Cost of Healthy Diet by Country',
         geo=dict(
             showframe=True,
             showcoastlines=True,
@@ -342,7 +322,6 @@ def plotYearMap(data):
 
     # ========== UPDATE LAYOUT/UI OPTIONS ==========
     fig.update_layout(
-        title_text='Daily Cost of Food by Country (2021 only)',
         geo=dict(
             showframe=True,
             showcoastlines=True,
