@@ -36,9 +36,11 @@
       <li id="Fruit & Vegetables Total Cost">Fruit & Vegetables Total Cost</li>
     </ul>
 
+    <div id="topText">
+      <h4>Description:</h4>
+      <p id="details"></p>
+    </div>
 
-  </div>
-  <div>
     <!-- Whenever a letter is typed into the search bar, it will call the highlightCountry function -->
     <input
       id="search"
@@ -46,8 +48,38 @@
       @input="highlightCountry"
       placeholder="Search for a country.."
     >
-    <div style="height: 700px;" id="div-1"></div>
   </div>
+
+  <!-- Country Comparison Table -->
+  <div id="tableContainer">
+    <h1 id="countrynotif" style="display:none;">Im Testing???</h1>
+
+    <!-- Reference: https://coreui.io/answers/how-to-build-a-table-in-vue/ -->
+    <!-- Reference: https://stackoverflow.com/questions/10610963/how-to-position-a-table-html -->
+    <table id="myTable">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Average Daily Costs</th>
+          <th>Average Annual Costs</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+            <button type = "button" class = "resetButton" onclick="resetTable()">Reset Table</button>
+          </td>
+        </tr>
+      </tfoot>
+
+    </table>
+  </div>
+
+  <div style="height: 700px;" id="div-1"></div> <!-- This is where MAP lives -->
+
   <div id="div-bottom">
     <h4>Additional Context</h4>
     <p id="div-bottom-text">Write data here!</p>
@@ -77,9 +109,19 @@ th,td {
     font-family: Helvetica;
   }
 
-  #div-top h1 {
+  #topText, #search, #div-top h1 {
     margin-left: 40px; /* I think this is a good number to align with buttons */
   }
+
+  #topText h4 {
+    margin-top: 0px;
+    margin-right: 10px;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: gray;
+    color: white;
+  }
+
   #dataSelectionBar {
     list-style-type: none;
     display: flex;
@@ -97,6 +139,11 @@ th,td {
   #dataSelectionBar li:hover {
     background-color: hsl(200, 100%, 45%);
     cursor: pointer;
+  }
+
+  #dataSelectionBar li.active {
+    background-color: hsl(360, 100%, 50%);
+    cursor: default;
   }
 
   /* ========== BOTTOM TEXT BOX | div-bottom ========== */
@@ -118,12 +165,53 @@ th,td {
   #data {
     margin-left: 5px;
   }
+
+  #tableContainer {
+    height: 125px;
+  }
+
+  #myTable {
+    margin-top: -20px;
+    margin-left: 300px;
+    z-index: 10;
+    border: 1px solid;
+    max-width: 850px;
+    border-collapse: collapse;
+  }
+
+  th,td {
+    padding: 5px;
+    border: 1px solid;
+  }
 </style>
 
 <script setup>
   import Plotly from 'plotly.js-dist-min'
   let map = null;
   let chartDiv = null;
+
+  /* Descriptions Map*/
+  const mapDescriptions = {
+    "Home" : `Shows the general costs of a healthy diet per country scored by low, medium, and high cost. 
+    The averages for daily cost of diet and annual cost of diet per country was calculated from data that spanned between 2017-2024.
+    Cost thresholds listed below and side legend can be operated to filter cost categories.
+    <ul>
+      <li>Low Cost: <$2.50/day</li>
+      <li>Medium Cost: $2.50-$3.49/day</li>
+      <li>High Cost: >$3.50/day</li>
+    </ul>
+    <br>`,
+    "Daily Cost" : `Daily cost of healthy diet per country by year.
+    Slide to across the years to view changes.`,
+    "Annual Cost" : `Annual cost of healthy diet per country by year.
+    Slide to across the years to view changes.`,
+    "Vegetables Cost" : `Daily cost of vegetables per country.
+    Data was collected only for the year 2021.`,
+    "Fruits Cost" : `Daily cost of fruits per country.
+    Data was collected only for the year 2021.`,
+    "Fruit & Vegetables Total Cost" : `Total daily cost of fruits and vegetables per country.
+    Data was collected only for the year 2021.`
+  }
 
   window.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch('/api/map/home');
@@ -188,6 +276,7 @@ th,td {
           highlightCountry({ target: searchInput });
         }, 100);
       }
+      updateCountryComparison()
     });
 
     /* CHANGE BETWEEN MAPS */
@@ -197,6 +286,7 @@ th,td {
       const map = await response.json();
       const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
       registerClickEvent(mapPlot);
+      updateCountryComparison(mapPlot)
     })
 
     let dailyButton = document.getElementById('Daily Cost')
@@ -248,10 +338,78 @@ th,td {
             let country = data.points[i].location
             console.log(country) /* for testing */
             document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
+            updateCountryComparison(country);
           }
         }
       )
     }
+
+    async function updateCountryComparison(country) {
+      const response = await fetch(`/api/country/${encodeURIComponent(country)}`); //encode needed if data has spaces
+      const _country = await response.json();
+      var table = document.getElementById("myTable");
+      var numCountries = document.getElementById("myTable").rows.length;
+      var added = false;
+
+      // Country comparison table
+      if (numCountries == 1) {
+        var row = table.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+
+        cell1.innerHTML = _country.name;
+        cell2.innerHTML = _country.averageAnnualCost;
+        cell3.innerHTML = _country.dailyCostPPP;
+      }
+
+      else if (numCountries < 5) {
+
+        for (let i = 0; i < numCountries; i++) {
+          if (document.getElementById("myTable").rows[i].cells[0].innerText == _country.name) {
+            added = true;
+            break;
+          }
+        }
+        if (added == false) {
+
+          var row = table.insertRow(1);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          var cell3 = row.insertCell(2);
+
+          cell1.innerHTML = _country.name;
+          cell2.innerHTML = "$" + _country.dailyCostPPP;
+          cell3.innerHTML = "$" + _country.averageAnnualCost;
+        }
+
+      }
+
+    };
+
+    function resetTable() {
+      var numCountries = document.getElementById("myTable").rows.length;
+
+      if (numCountries > 0) {
+        for (let i = numCountries - 2; i > 0; i--) {
+          document.getElementById("myTable").deleteRow(i);
+        }
+      }
+    }
+
+    window.resetTable = resetTable;
+
+  /* Tracks active page & updates description */
+  document.getElementById('Home').classList.add('active'); // sets Home to active on start
+  document.getElementById('details').innerHTML = mapDescriptions['Home'];
+  const tabList = document.querySelectorAll('#dataSelectionBar li')
+  tabList.forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelector('.active')?.classList.remove('active');
+      tab.classList.add('active');
+      document.getElementById('details').innerHTML = mapDescriptions[tab.id];
+      })
+  })
   })
 
   function highlightCountry(event) {

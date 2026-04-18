@@ -47,7 +47,7 @@ def get_country_info(country_name):
       "name":country.name,
       "averageAnnualCost":country.averageAnnualCost,
       "dailyCostPPP":country.averagePPP
-      }
+   }
 
 if __name__ == '__main__':
     app.run(port=5000)
