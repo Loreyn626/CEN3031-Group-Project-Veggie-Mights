@@ -29,7 +29,8 @@ class Country:
         self.averageVegetablesPPP = 0
         self.averageFruitsPPP = 0
         self.averageTotalFoodCost = 0
-    
+        self.averageCostCategory = ''
+
     # Using if-else statement to filter object creation on parsing csv, we can use this to add data values to the obj arrays
     def appendAnnualData(self, year, costPPP, annualCost, vegetablesPPP, fruitsPPP, totalFoodCost):
         self.years.append(year)
@@ -53,13 +54,20 @@ class Country:
         arrays = [self.costPPPs, self.annualCosts, self.vegetablesPPPs, self.fruitsPPPs, self.totalFoodCosts]
         for index, array in enumerate(arrays):
             valid = [float(i) for i in array if i is not '']
-            if len(valid) > 0: 
+            if len(valid) > 0:
                 average = round(sum(valid)/len(valid), 2)
             else:
                 average = 'N/A'
 
             if index == 0:
                 self.averagePPP = average
+                # Calculates average cost category based on average PPP
+                if average <= 2.5:
+                    self.averageCostCategory = 'Low Cost'
+                elif 2.5 < average <= 3.5:
+                    self.averageCostCategory = 'Medium Cost'
+                else:
+                    self.averageCostCategory = 'High Cost'
             elif index == 1:
                 self.averageAnnualCost = average
             elif index == 2:
