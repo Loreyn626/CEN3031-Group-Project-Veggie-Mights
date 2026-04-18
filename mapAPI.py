@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from mapUI import *
+from tableUI import *
 import plotly
 
 app = Flask(__name__)
@@ -36,6 +37,17 @@ def get_fruits_map():
 def get_fruit_veg_total_map():
     return plotly.io.to_json(plotYearMap('FVC'))
 
+
+# https://flask.palletsprojects.com/en/stable/patterns/javascript/
+# use a dictionary to return a JSON object with the country info
+@app.route('/api/country/<country_name>', methods=['GET'])
+def get_country_info(country_name):
+   country = country_info(country_name) # function from tableUI.py
+   return {
+      "name":country.name,
+      "averageAnnualCost":country.averageAnnualCost,
+      "dailyCostPPP":country.averagePPP
+   }
 
 if __name__ == '__main__':
     app.run(port=5000)

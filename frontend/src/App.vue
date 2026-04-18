@@ -9,7 +9,7 @@
       <li id="Fruits Cost">Fruits Cost</li>
       <li id="Fruit & Vegetables Total Cost">Fruit & Vegetables Total Cost</li>
     </ul>
-    
+
     <div id="topText">
       <h4>Description:</h4>
       <p id="details"></p>
@@ -23,7 +23,35 @@
       placeholder="Search for a country.."
     >
   </div>
-    
+
+  <!-- Country Comparison Table -->
+  <div id="tableContainer">
+    <h1 id="countrynotif" style="display:none;">Im Testing???</h1>
+
+    <!-- Reference: https://coreui.io/answers/how-to-build-a-table-in-vue/ -->
+    <!-- Reference: https://stackoverflow.com/questions/10610963/how-to-position-a-table-html -->
+    <table id="myTable">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Average Daily Costs</th>
+          <th>Average Annual Costs</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+            <button type = "button" class = "resetButton" onclick="resetTable()">Reset Table</button>
+          </td>
+        </tr>
+      </tfoot>
+
+    </table>
+  </div>
+
   <div style="height: 700px;" id="div-1"></div> <!-- This is where MAP lives -->
 
   <div id="div-bottom">
@@ -94,6 +122,24 @@
   #data {
     margin-left: 5px;
   }
+
+  #tableContainer {
+    height: 125px;
+  }
+
+  #myTable {
+    margin-top: -20px;
+    margin-left: 300px;
+    z-index: 10;
+    border: 1px solid;
+    max-width: 850px;
+    border-collapse: collapse;
+  }
+
+  th,td {
+    padding: 5px;
+    border: 1px solid;
+  }
 </style>
 
 <script setup>
@@ -142,6 +188,7 @@
           highlightCountry({ target: searchInput });
         }, 100);
       }
+      updateCountryComparison()
     });
 
     /* CHANGE BETWEEN MAPS */
@@ -151,6 +198,7 @@
       const map = await response.json();
       const mapPlot = await Plotly.newPlot("div-1", map.data, map.layout)
       registerClickEvent(mapPlot);
+      updateCountryComparison(mapPlot)
     })
 
     let dailyButton = document.getElementById('Daily Cost')
@@ -202,10 +250,66 @@
             let country = data.points[i].location
             console.log(country) /* for testing */
             document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
+            updateCountryComparison(country);
           }
         }
       )
     }
+
+    async function updateCountryComparison(country) {
+      const response = await fetch(`/api/country/${encodeURIComponent(country)}`); //encode needed if data has spaces
+      const _country = await response.json();
+      var table = document.getElementById("myTable");
+      var numCountries = document.getElementById("myTable").rows.length;
+      var added = false;
+
+      // Country comparison table
+      if (numCountries == 1) {
+        var row = table.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+
+        cell1.innerHTML = _country.name;
+        cell2.innerHTML = _country.averageAnnualCost;
+        cell3.innerHTML = _country.dailyCostPPP;
+      }
+
+      else if (numCountries < 5) {
+
+        for (let i = 0; i < numCountries; i++) {
+          if (document.getElementById("myTable").rows[i].cells[0].innerText == _country.name) {
+            added = true;
+            break;
+          }
+        }
+        if (added == false) {
+
+          var row = table.insertRow(1);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          var cell3 = row.insertCell(2);
+
+          cell1.innerHTML = _country.name;
+          cell2.innerHTML = "$" + _country.dailyCostPPP;
+          cell3.innerHTML = "$" + _country.averageAnnualCost;
+        }
+
+      }
+
+    };
+
+    function resetTable() {
+      var numCountries = document.getElementById("myTable").rows.length;
+
+      if (numCountries > 0) {
+        for (let i = numCountries - 2; i > 0; i--) {
+          document.getElementById("myTable").deleteRow(i);
+        }
+      }
+    }
+
+    window.resetTable = resetTable;
 
   /* Tracks active page & updates description */
   document.getElementById('Home').classList.add('active'); // sets Home to active on start
