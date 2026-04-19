@@ -34,8 +34,8 @@
           <th>Country</th>
           <th>Average Daily Costs</th>
           <th>Average Annual Costs</th>
-          <th>Average Daily Vegetables Costs</th>
-          <th>Average Daily Fruits Costs</th>
+          <th>2021 Daily Vegetables Costs</th>
+          <th>2021 Daily Fruits Costs</th>
         </tr>
       </thead>
       <tbody>
@@ -124,12 +124,12 @@
   }
 
   #tableContainer {
-    height: 125px;
+    height: 170px;
   }
 
   #myTable {
     margin-top: -20px;
-    margin-left: 300px;
+    margin-left: 230px;
     z-index: 10;
     border: 1px solid gray;
     border-collapse: collapse;
@@ -139,6 +139,7 @@
   #myTable thead {
     background-color: gray;
     color: white;
+    font-family: Helvetica;
 
   }
 
@@ -146,6 +147,7 @@
     padding-left: 10px;
     padding-right: 10px;
     border: 1px solid gray;
+    font-family: Helvetica;
   }
   
 </style>
@@ -256,7 +258,7 @@
         chartDiv.on('plotly_click', function(data){
           for(var i=0; i < data.points.length; i++){
             let country = data.points[i].location
-            console.log(country) /* for testing */
+            // console.log(country) /* for testing */
             document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
             updateCountryComparison(country);
           }
@@ -281,8 +283,8 @@
         var cell5 = row.insertCell(4);
 
         cell1.innerHTML = _country.name;
-        cell2.innerHTML = _country.averageAnnualCost;
-        cell3.innerHTML = _country.dailyCostPPP;
+        cell2.innerHTML = "$" + _country.dailyCostPPP;
+        cell3.innerHTML = "$" + _country.averageAnnualCost;
         cell4.innerHTML = "$" + _country.averageVegetableCost;
         cell5.innerHTML = "$" + _country.averageFruitCost;
       }
