@@ -46,7 +46,9 @@ def get_country_info(country_name):
    return {
       "name":country.name,
       "averageAnnualCost":country.averageAnnualCost,
-      "dailyCostPPP":country.averagePPP
+      "dailyCostPPP":country.averagePPP,
+      "averageVegetableCost":country.averageVegetablesPPP,
+      "averageFruitCost":country.averageFruitsPPP,
    }
 
 if __name__ == '__main__':

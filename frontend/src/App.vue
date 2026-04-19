@@ -26,8 +26,6 @@
 
   <!-- Country Comparison Table -->
   <div id="tableContainer">
-    <h1 id="countrynotif" style="display:none;">Im Testing???</h1>
-
     <!-- Reference: https://coreui.io/answers/how-to-build-a-table-in-vue/ -->
     <!-- Reference: https://stackoverflow.com/questions/10610963/how-to-position-a-table-html -->
     <table id="myTable">
@@ -36,6 +34,8 @@
           <th>Country</th>
           <th>Average Daily Costs</th>
           <th>Average Annual Costs</th>
+          <th>Average Daily Vegetables Costs</th>
+          <th>Average Daily Fruits Costs</th>
         </tr>
       </thead>
       <tbody>
@@ -60,7 +60,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
   /* ========== TITLE & NAVIGATION BUTTONS | div-top ========== */
   #div-top {
     font-family: Helvetica;
@@ -131,15 +131,23 @@
     margin-top: -20px;
     margin-left: 300px;
     z-index: 10;
-    border: 1px solid;
-    max-width: 850px;
+    border: 1px solid gray;
     border-collapse: collapse;
+
   }
 
-  th,td {
-    padding: 5px;
-    border: 1px solid;
+  #myTable thead {
+    background-color: gray;
+    color: white;
+
   }
+
+  #myTable th,td {
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid gray;
+  }
+  
 </style>
 
 <script setup>
@@ -269,10 +277,14 @@
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
 
         cell1.innerHTML = _country.name;
         cell2.innerHTML = _country.averageAnnualCost;
         cell3.innerHTML = _country.dailyCostPPP;
+        cell4.innerHTML = "$" + _country.averageVegetableCost;
+        cell5.innerHTML = "$" + _country.averageFruitCost;
       }
 
       else if (numCountries < 5) {
@@ -289,10 +301,14 @@
           var cell1 = row.insertCell(0);
           var cell2 = row.insertCell(1);
           var cell3 = row.insertCell(2);
+          var cell4 = row.insertCell(3);
+          var cell5 = row.insertCell(4);
 
           cell1.innerHTML = _country.name;
           cell2.innerHTML = "$" + _country.dailyCostPPP;
           cell3.innerHTML = "$" + _country.averageAnnualCost;
+          cell4.innerHTML = "$" + _country.averageVegetableCost;
+          cell5.innerHTML = "$" + _country.averageFruitCost;
         }
 
       }
