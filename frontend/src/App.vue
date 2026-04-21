@@ -157,9 +157,9 @@
 
   /* Descriptions Map*/
   const mapDescriptions = {
-    "Home" : `Shows the general costs of a healthy diet per country scored by low, medium, and high cost.
+    "Home" : `The map displays the general costs of a healthy diet per country scored by low, medium, and high cost.
     The averages for daily cost of diet and annual cost of diet per country was calculated from data that spanned between 2017-2024.
-    Cost thresholds listed below and side legend can be operated to filter cost categories.
+    Cost thresholds are listed below. The Cost Category side legend can be operated to filter cost categories.
     <ul>
       <li>Low Cost: <$2.50/day</li>
       <li>Medium Cost: $2.50-$3.49/day</li>
