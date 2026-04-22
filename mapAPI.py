@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
-from mapUI import *
-from tableUI import *
+from flask import Flask
+from mapUI import plotAverageMap, plotYearlyMap, plotYearMap
+from tableUI import country_info
 import plotly
 
 app = Flask(__name__)

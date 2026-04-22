@@ -1,5 +1,5 @@
 import csv
-from data.classes import *
+from data.classes import Country
 
 countries = []
 current_index = -1

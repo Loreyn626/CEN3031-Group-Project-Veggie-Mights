@@ -54,10 +54,10 @@
 
   <div style="height: 700px;" id="div-1"></div> <!-- This is where MAP lives -->
 
-  <div id="div-bottom">
+  <!-- <div id="div-bottom">
     <h4>Additional Context</h4>
     <p id="div-bottom-text">Write data here!</p>
-  </div>
+  </div> -->
 </template>
 
 <style>
@@ -104,7 +104,7 @@
   }
 
   /* ========== BOTTOM TEXT BOX | div-bottom ========== */
-  #div-bottom {
+  /* #div-bottom {
     font-family: Helvetica;
     border: solid;
     border-width: 5px;
@@ -121,7 +121,7 @@
 
   #data {
     margin-left: 5px;
-  }
+  } */
 
   #tableContainer {
     height: 170px;
@@ -154,14 +154,13 @@
 
 <script setup>
   import Plotly from 'plotly.js-dist-min'
-  let map = null;
   let chartDiv = null;
 
   /* Descriptions Map*/
   const mapDescriptions = {
     "Home" : `The map displays the general costs of a healthy diet per country scored by low, medium, and high cost.
     The averages for daily cost of diet and annual cost of diet per country was calculated from data that spanned between 2017-2024.
-    Cost thresholds are listed below. The Cost Category side legend can be operated to filter cost categories.
+    Cost thresholds are listed below. The side legend can be used to filter cost categories on the map.
     <ul>
       <li>Low Cost: <$2.50/day</li>
       <li>Medium Cost: $2.50-$3.49/day</li>
@@ -190,7 +189,7 @@
     registerClickEvent(mapPlot);
 
     // tracks whether a change has been made to the slider
-    chartDiv.on('plotly_sliderchange', (data) => {
+    chartDiv.on('plotly_sliderchange', () => {
       const searchInput = document.getElementById("search");
       if (searchInput && searchInput.value) {
         // need to set a timeout to make sure the trace visibilities were updated based on slider changes before calling highlightCountry and checking that the country is visible
@@ -256,10 +255,10 @@
     function registerClickEvent(chartDiv) {
         chartDiv.removeAllListeners('plotly_click') /* Prevent duplicate click events */
         chartDiv.on('plotly_click', function(data){
-          for(var i=0; i < data.points.length; i++){
+          for(let i=0; i < data.points.length; i++){
             let country = data.points[i].location
             // console.log(country) /* for testing */
-            document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
+            // document.getElementById('div-bottom-text').textContent = country /* can expand to include more here */
             updateCountryComparison(country);
           }
         }
@@ -269,18 +268,18 @@
     async function updateCountryComparison(country) {
       const response = await fetch(`/api/country/${encodeURIComponent(country)}`); //encode needed if data has spaces
       const _country = await response.json();
-      var table = document.getElementById("myTable");
-      var numCountries = document.getElementById("myTable").rows.length;
-      var added = false;
+      let table = document.getElementById("myTable");
+      let numCountries = document.getElementById("myTable").rows.length;
+      let added = false;
 
       // Country comparison table
       if (numCountries == 1) {
-        var row = table.insertRow(1);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        var cell5 = row.insertCell(4);
+        let row = table.insertRow(1);
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        let cell3 = row.insertCell(2);
+        let cell4 = row.insertCell(3);
+        let cell5 = row.insertCell(4);
 
         cell1.innerHTML = _country.name;
         cell2.innerHTML = "$" + _country.dailyCostPPP;
@@ -299,12 +298,12 @@
         }
         if (added == false) {
 
-          var row = table.insertRow(1);
-          var cell1 = row.insertCell(0);
-          var cell2 = row.insertCell(1);
-          var cell3 = row.insertCell(2);
-          var cell4 = row.insertCell(3);
-          var cell5 = row.insertCell(4);
+          let row = table.insertRow(1);
+          let cell1 = row.insertCell(0);
+          let cell2 = row.insertCell(1);
+          let cell3 = row.insertCell(2);
+          let cell4 = row.insertCell(3);
+          let cell5 = row.insertCell(4);
 
           cell1.innerHTML = _country.name;
           cell2.innerHTML = "$" + _country.dailyCostPPP;
@@ -318,7 +317,7 @@
     };
 
     function resetTable() {
-      var numCountries = document.getElementById("myTable").rows.length;
+      let numCountries = document.getElementById("myTable").rows.length;
 
       if (numCountries > 0) {
         for (let i = numCountries - 2; i > 0; i--) {

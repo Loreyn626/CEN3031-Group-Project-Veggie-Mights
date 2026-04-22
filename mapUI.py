@@ -1,6 +1,4 @@
-import plotly
 import plotly.graph_objects as go
-from data.classes import *
 from data.parsing import countries
 import pandas as pd
 

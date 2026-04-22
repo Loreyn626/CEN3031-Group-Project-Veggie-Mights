@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "nodemon server/app.js"
+    "dev": "nodemon server/app.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,10 @@
     "url": "https://github.com/Loreyn626/CEN3031-Group-Project-Veggie-Mights/issues"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.5.0",
     "nodemon": "^3.1.14"
   }
 }

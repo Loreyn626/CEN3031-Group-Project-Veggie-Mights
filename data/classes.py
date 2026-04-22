@@ -4,7 +4,6 @@ Since there are multiple rows of data for the same countries from years 2017-202
 Skimming the data, there are no years & countries where cost categories have changed and ALL data points have "Estimated Value" for dataQuality.
 '''
 
-import math
 
 class Country:
     def __init__(self, code, name, region): 
@@ -53,7 +52,7 @@ class Country:
     def calcAverages(self):
         arrays = [self.costPPPs, self.annualCosts, self.vegetablesPPPs, self.fruitsPPPs, self.totalFoodCosts]
         for index, array in enumerate(arrays):
-            valid = [float(i) for i in array if i is not '']
+            valid = [float(i) for i in array if i != '']
             if len(valid) > 0:
                 average = round(sum(valid)/len(valid), 2)
             else:
